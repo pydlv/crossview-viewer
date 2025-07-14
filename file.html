@@ -33,6 +33,11 @@
 </head>
 <body>
   <h2 style="text-align:center;">Upload Two Images for Cross-View</h2>
+  <div style="text-align:center; margin-top:20px;">
+    <label for="imgSizeSlider"><b>Image Size:</b></label>
+    <input type="range" id="imgSizeSlider" min="100" max="800" value="300">
+    <span id="imgSizeValue">300px</span>
+  </div>
   <div class="upload-section">
     <label class="upload-label">
       Left Image
@@ -52,6 +57,9 @@
     const rightInput = document.getElementById('rightImageInput');
     const leftImg = document.getElementById('leftImage');
     const rightImg = document.getElementById('rightImage');
+    const imgSizeSlider = document.getElementById('imgSizeSlider');
+    const imgSizeValue = document.getElementById('imgSizeValue');
+    const crossViewImages = document.querySelectorAll('.cross-view-image');
 
     leftInput.addEventListener('change', function(e) {
       const file = e.target.files[0];
@@ -70,7 +78,15 @@
         rightImg.src = '';
       }
     });
+
+    imgSizeSlider.addEventListener('input', function() {
+      const size = imgSizeSlider.value;
+      imgSizeValue.textContent = size + 'px';
+      crossViewImages.forEach(img => {
+        img.style.width = size + 'px';
+        img.style.height = size + 'px';
+      });
+    });
   </script>
 </body>
 </html>
-
