@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cross-view Image Display</title>
+  <style>
+    .cross-view-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .cross-view-image {
+      width: 300px;
+      height: 300px;
+      object-fit: contain;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+    }
+    .upload-section {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 40px;
+    }
+    .upload-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center;">Upload Two Images for Cross-View</h2>
+  <div class="upload-section">
+    <label class="upload-label">
+      Left Image
+      <input type="file" accept="image/*" id="leftImageInput">
+    </label>
+    <label class="upload-label">
+      Right Image
+      <input type="file" accept="image/*" id="rightImageInput">
+    </label>
+  </div>
+  <div class="cross-view-container">
+    <img id="leftImage" class="cross-view-image" alt="Left Image (Displayed on Left)">
+    <img id="rightImage" class="cross-view-image" alt="Right Image (Displayed on Right)">
+  </div>
+  <script>
+    const leftInput = document.getElementById('leftImageInput');
+    const rightInput = document.getElementById('rightImageInput');
+    const leftImg = document.getElementById('leftImage');
+    const rightImg = document.getElementById('rightImage');
+
+    leftInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        leftImg.src = URL.createObjectURL(file);
+      } else {
+        leftImg.src = '';
+      }
+    });
+
+    rightInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        rightImg.src = URL.createObjectURL(file);
+      } else {
+        rightImg.src = '';
+      }
+    });
+  </script>
+</body>
+</html>
+
