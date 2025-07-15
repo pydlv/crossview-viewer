@@ -29,6 +29,23 @@
       align-items: center;
       font-weight: bold;
     }
+    .magnifier {
+      position: absolute;
+      pointer-events: none;
+      border: 2px solid #888;
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      background-repeat: no-repeat;
+      background-size: 600% 600%;
+      display: none;
+      z-index: 10;
+    }
+    .image-wrapper {
+      position: relative;
+      display: inline-block;
+    }
   </style>
 </head>
 <body>
@@ -49,8 +66,13 @@
     </label>
   </div>
   <div class="cross-view-container">
-    <img id="leftImage" class="cross-view-image" alt="Left Image (Displayed on Left)">
-    <img id="rightImage" class="cross-view-image" alt="Right Image (Displayed on Right)">
+    <div class="image-wrapper" style="position:relative;">
+      <img id="leftImage" class="cross-view-image" alt="Left Image (Displayed on Left)">
+    </div>
+    <div class="image-wrapper" style="position:relative;">
+      <img id="rightImage" class="cross-view-image" alt="Right Image (Displayed on Right)">
+    </div>
+    <div id="magnifier" class="magnifier"></div>
   </div>
   <script>
     const leftInput = document.getElementById('leftImageInput');
@@ -60,6 +82,7 @@
     const imgSizeSlider = document.getElementById('imgSizeSlider');
     const imgSizeValue = document.getElementById('imgSizeValue');
     const crossViewImages = document.querySelectorAll('.cross-view-image');
+    const magnifier = document.getElementById('magnifier');
 
     leftInput.addEventListener('change', function(e) {
       const file = e.target.files[0];
@@ -86,6 +109,57 @@
         img.style.width = size + 'px';
         img.style.height = size + 'px';
       });
+    });
+
+    function showMagnifier(img, e) {
+      const rect = img.getBoundingClientRect();
+      const size = magnifier.offsetWidth;
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const imgSrc = img.src;
+      if (!imgSrc) return;
+
+      magnifier.style.display = 'block';
+      magnifier.style.left = (e.pageX - size / 2) + 'px';
+      magnifier.style.top = (e.pageY - size / 2) + 'px';
+      magnifier.style.backgroundImage = `url('${imgSrc}')`;
+
+      // Calculate zoom factor based on image size
+      const zoom = 3;
+      const imgWidth = img.width;
+      const imgHeight = img.height;
+      const bgX = (x / imgWidth) * 100;
+      const bgY = (y / imgHeight) * 100;
+      magnifier.style.backgroundSize = `${imgWidth * zoom}px ${imgHeight * zoom}px`;
+      magnifier.style.backgroundPosition = `${bgX}% ${bgY}%`;
+    }
+
+    function hideMagnifier() {
+      magnifier.style.display = 'none';
+    }
+
+    [leftImg, rightImg].forEach(img => {
+      img.addEventListener('mousemove', function(e) {
+        showMagnifier(img, e);
+      });
+      img.addEventListener('mouseleave', hideMagnifier);
+      img.addEventListener('mouseenter', function(e) {
+        showMagnifier(img, e);
+      });
+    });
+
+    // Update magnifier size when slider changes
+    imgSizeSlider.addEventListener('input', function() {
+      const size = imgSizeSlider.value;
+      imgSizeValue.textContent = size + 'px';
+      crossViewImages.forEach(img => {
+        img.style.width = size + 'px';
+        img.style.height = size + 'px';
+      });
+      // Also update magnifier background size if visible
+      if (magnifier.style.display === 'block') {
+        magnifier.style.backgroundSize = `${imgSizeSlider.value * 3}px ${imgSizeSlider.value * 3}px`;
+      }
     });
   </script>
 </body>
